@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  scraper:
+    build: .
+    volumes:
+      - ./:/usr/src/streakeeper
+      - modules:/usr/src/streakeeper/node_modules
+    links:
+      - browser
+  browser:
+    build: ./browser
+volumes:
+  modules:
