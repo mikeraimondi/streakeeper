@@ -1,15 +1,5 @@
 import * as launchChrome from "@serverless-chrome/lambda";
 import * as CDP from "chrome-remote-interface";
-import * as promisify from "promisify-node";
-
-import * as fs from "fs";
-const writeFileAsync = promisify(fs.writeFile);
-
-async function takeScreenshot(page, file) {
-  const screenshot = await page.captureScreenshot();
-  const buffer = new Buffer(screenshot.data, "base64");
-  await writeFileAsync(file, buffer, "base64");
-}
 
 const run = async () => {
   const chrome = await launchChrome({
