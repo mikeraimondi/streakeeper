@@ -1,4 +1,5 @@
 import * as launchChrome from "@serverless-chrome/lambda";
+import { Callback, Context } from "aws-lambda";
 import * as CDP from "chrome-remote-interface";
 
 const run = async () => {
@@ -31,9 +32,9 @@ const run = async () => {
   });
 };
 
-export const handler = (event, context, callback) => {
+export const handler = (event: any, context: Context, callback: Callback) => {
   run().then(() => {
-    callback(null);
+    callback(undefined);
   }).catch((err) => {
     callback(err);
   });
