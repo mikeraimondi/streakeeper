@@ -11,6 +11,13 @@ async function takeScreenshot(page: any): Promise<string> {
   return fileName;
 }
 
+const center = (quad: any): any => {
+  return [
+    Math.floor(((quad[2] - quad[0]) / 2) + quad[0]),
+    Math.floor(((quad[5] - quad[3]) / 2) + quad[3]),
+  ];
+};
+
 const run = async () => {
   const chrome = await launchChrome({
     flags: [
@@ -36,21 +43,20 @@ const run = async () => {
         selector: "#sign-in-btn",
       });
       const { model: { content: btnQuad } } = await DOM.getBoxModel({ nodeId: loginNode });
-      const xloc = Math.floor(((btnQuad[2] - btnQuad[0]) / 2) + btnQuad[0]);
-      const yloc = Math.floor(((btnQuad[5] - btnQuad[3]) / 2) + btnQuad[3]);
+      const loginBtnCenter = center(btnQuad);
       await Input.dispatchMouseEvent({
         button: "left",
         clickCount: 1,
         type: "mousePressed",
-        x: xloc,
-        y: yloc,
+        x: loginBtnCenter[0],
+        y: loginBtnCenter[1],
       });
       await Input.dispatchMouseEvent({
         button: "left",
         clickCount: 1,
         type: "mouseReleased",
-        x: xloc,
-        y: yloc,
+        x: loginBtnCenter[0],
+        y: loginBtnCenter[1],
       });
       throw new Error("debugError");
     } catch (e) {
