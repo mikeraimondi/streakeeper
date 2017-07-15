@@ -15,7 +15,7 @@
     "typescript": "^2.4.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "sls invoke local -f main && open /tmp/streakeeper.png"
   },
   "author": "",
   "license": "ISC"

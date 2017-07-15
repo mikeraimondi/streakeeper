@@ -3,9 +3,15 @@
 	"rules": {
 		"no-unused-expression": true,
 		"no-duplicate-variable": true,
-		"no-unused-variable": true,
 		"no-console": [
 			false
+		],
+		"variable-name": [
+			"allow-leading-underscore"
+		],
+		"interface-name": [
+			true,
+			"never-prefix"
 		]
 	}
 }
