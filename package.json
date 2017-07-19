@@ -5,7 +5,8 @@
   "main": "handler.js",
   "dependencies": {
     "@serverless-chrome/lambda": "^1.0.0-5",
-    "chrome-remote-interface": "^0.23.3"
+    "chrome-remote-interface": "^0.23.3",
+    "source-map-support": "^0.4.15"
   },
   "devDependencies": {
     "@types/aws-lambda": "^0.0.14",
@@ -15,7 +16,7 @@
     "typescript": "^2.4.1"
   },
   "scripts": {
-    "dev": "sls invoke local -f main && open /tmp/streakeeper.png"
+    "dev": "SLS_DEBUG=* serverless invoke local -f main && open /tmp/streakeeper.png"
   },
   "author": "",
   "license": "ISC"

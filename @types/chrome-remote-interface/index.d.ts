@@ -1,4 +1,4 @@
 declare module "chrome-remote-interface" {
   export = index;
-  function index(): any;
+  function index(a: any): any;
 }
