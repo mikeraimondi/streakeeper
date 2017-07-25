@@ -59,6 +59,46 @@ const typeIn = async (input: any, val: string): Promise<void> => {
   }
 };
 
+async function nodeAppears(client: any, selector: string) {
+  // browser code to register and parse mutations
+  const browserCode = (sel: any) => {
+    return new Promise((fulfill, _reject) => {
+      new MutationObserver((mutations, observer) => {
+        const nodes: any[] = [];
+        mutations.forEach((mutation) => {
+          nodes.push(...mutation.addedNodes);
+        });
+        // fulfills if at least one node matches the selector
+        if (nodes.find((node) => node.matches(sel))) {
+          observer.disconnect();
+          fulfill();
+        }
+      }).observe(document.body, {
+        childList: true,
+      });
+    });
+  };
+  const { Runtime } = client;
+  const observe = Runtime.evaluate({
+    awaitPromise: true,
+    expression: `(${browserCode})(${JSON.stringify(selector)})`,
+  });
+  const timeout = new Promise((_resolve, reject) => {
+    const id = setTimeout(() => {
+      clearTimeout(id);
+      reject(`timed out waiting for "${selector}"`);
+    }, 5000);
+  });
+  const { exceptionDetails } = await Promise.race([
+    observe,
+    timeout,
+  ]);
+  if (exceptionDetails) {
+    throw new Error(JSON.stringify(exceptionDetails.exception));
+  }
+  return;
+}
+
 const run = async () => {
   const debugError = "debugError";
   const chrome = await launchChrome({
@@ -77,10 +117,11 @@ const run = async () => {
     url: "about:blank",
   });
   const client = await CDP({ target: targetId });
-  const { DOM, Page, Network, Input } = client;
+  const { DOM, Page, Network, Input, Runtime } = client;
   await Page.enable();
   await DOM.enable();
   await Network.enable();
+  await Runtime.enable();
 
   await Page.navigate({ url: "https://duolingo.com" });
   await Page.loadEventFired();
@@ -90,9 +131,9 @@ const run = async () => {
     await clickCenter(DOM, Input, "#top_password");
     await typeIn(Input, process.env.password);
     await clickCenter(DOM, Input, "#login-button");
-    await Page.loadEventFired(async () => {
-      throw new Error(debugError);
-    });
+    await Page.loadEventFired();
+    await nodeAppears(client, 'div[title="Lingots"]');
+    throw new Error(debugError);
   } catch (err) {
     const screenshot = await takeScreenshot(Page);
     console.log("screenshot saved to: " + screenshot);
