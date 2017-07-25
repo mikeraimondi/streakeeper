@@ -20,7 +20,8 @@ const center = (quad: any): any => {
   ];
 };
 
-const clickCenter = async (DOM: any, Input: any, selector: string): Promise<void> => {
+const clickCenter = async (client: any, selector: string): Promise<void> => {
+  const { DOM, Input } = client;
   await new Promise((resolve) => setTimeout(resolve, 300));
   const { root: { nodeId: docNodeId } } = await DOM.getDocument();
   const { nodeId: selNodeId } = await DOM.querySelector({
@@ -45,15 +46,16 @@ const clickCenter = async (DOM: any, Input: any, selector: string): Promise<void
   });
 };
 
-const typeIn = async (input: any, val: string): Promise<void> => {
+const typeIn = async (client: any, val: string): Promise<void> => {
+  const { Input } = client;
   for (const letter of val) {
     await new Promise((resolve) => setTimeout(resolve, 200));
-    await input.dispatchKeyEvent({
+    await Input.dispatchKeyEvent({
       text: letter,
       type: "keyDown",
     });
     await new Promise((resolve) => setTimeout(resolve, 50));
-    await input.dispatchKeyEvent({
+    await Input.dispatchKeyEvent({
       type: "keyUp",
     });
   }
@@ -117,7 +119,7 @@ const run = async () => {
     url: "about:blank",
   });
   const client = await CDP({ target: targetId });
-  const { DOM, Page, Network, Input, Runtime } = client;
+  const { DOM, Page, Network, Runtime } = client;
   await Page.enable();
   await DOM.enable();
   await Network.enable();
@@ -126,11 +128,11 @@ const run = async () => {
   await Page.navigate({ url: "https://duolingo.com" });
   await Page.loadEventFired();
   try {
-    await clickCenter(DOM, Input, "#sign-in-btn");
-    await typeIn(Input, process.env.login);
-    await clickCenter(DOM, Input, "#top_password");
-    await typeIn(Input, process.env.password);
-    await clickCenter(DOM, Input, "#login-button");
+    await clickCenter(client, "#sign-in-btn");
+    await typeIn(client, process.env.login);
+    await clickCenter(client, "#top_password");
+    await typeIn(client, process.env.password);
+    await clickCenter(client, "#login-button");
     await Page.loadEventFired();
     await nodeAppears(client, 'div[title="Lingots"]');
     throw new Error(debugError);
