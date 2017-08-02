@@ -16,7 +16,7 @@
     "typescript": "^2.4.1"
   },
   "scripts": {
-    "dev": "SLS_DEBUG=* serverless invoke local -f main && open /tmp/streakeeper.png"
+    "dev": "SLS_DEBUG=* serverless invoke local -f main"
   },
   "author": "",
   "license": "ISC"

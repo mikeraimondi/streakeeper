@@ -8,7 +8,7 @@ import fs = require("fs");
 const takeScreenshot = async (page: any): Promise<string> => {
   const screenshot = await page.captureScreenshot();
   const buffer = new Buffer(screenshot.data, "base64");
-  const fileName = `/tmp/streakeeper.png`;
+  const fileName = `/tmp/streakeeper-${new Date().getTime()}.png`;
   fs.writeFileSync(fileName, buffer, { encoding: "base64" });
   return fileName;
 };
@@ -61,29 +61,20 @@ const typeIn = async (client: any, val: string): Promise<void> => {
   }
 };
 
-async function nodeAppears(client: any, selector: string) {
-  // browser code to register and parse mutations
-  const browserCode = (sel: any) => {
-    return new Promise((fulfill, _reject) => {
-      new MutationObserver((mutations, observer) => {
-        const nodes: any[] = [];
-        mutations.forEach((mutation) => {
-          nodes.push(...mutation.addedNodes);
-        });
-        // fulfills if at least one node matches the selector
-        if (nodes.find((node) => node.matches(sel))) {
-          observer.disconnect();
-          fulfill();
-        }
-      }).observe(document.body, {
-        childList: true,
+const nodeAppears = async (client: any, selector: string) => {
+  const poll = new Promise(async (resolve, _reject) => {
+    const { DOM } = client;
+    let selNodeId = 0;
+    while (selNodeId <= 0) {
+      const { root: { nodeId: docNodeId } } = await DOM.getDocument();
+      const res = await DOM.querySelector({
+        nodeId: docNodeId,
+        selector,
       });
-    });
-  };
-  const { Runtime } = client;
-  const observe = Runtime.evaluate({
-    awaitPromise: true,
-    expression: `(${browserCode})(${JSON.stringify(selector)})`,
+      selNodeId = res.nodeId;
+      await new Promise((resolveSleep) => setTimeout(resolveSleep, 100));
+    }
+    resolve();
   });
   const timeout = new Promise((_resolve, reject) => {
     const id = setTimeout(() => {
@@ -91,15 +82,11 @@ async function nodeAppears(client: any, selector: string) {
       reject(`timed out waiting for "${selector}"`);
     }, 5000);
   });
-  const { exceptionDetails } = await Promise.race([
-    observe,
+  await Promise.race([
+    poll,
     timeout,
   ]);
-  if (exceptionDetails) {
-    throw new Error(JSON.stringify(exceptionDetails.exception));
-  }
-  return;
-}
+};
 
 const run = async () => {
   const debugError = "debugError";
@@ -125,16 +112,42 @@ const run = async () => {
   await Network.enable();
   await Runtime.enable();
 
-  await Page.navigate({ url: "https://duolingo.com" });
+  await Page.navigate({ url: "https://www.duolingo.com" });
   await Page.loadEventFired();
   try {
+    // login
     await clickCenter(client, "#sign-in-btn");
     await typeIn(client, process.env.login);
     await clickCenter(client, "#top_password");
     await typeIn(client, process.env.password);
     await clickCenter(client, "#login-button");
     await Page.loadEventFired();
-    await nodeAppears(client, 'div[title="Lingots"]');
+
+    // visit store
+    await Page.navigate({ url: "https://www.duolingo.com/show_store" });
+    await Page.loadEventFired();
+    const freezeHeading = "ul h4";
+    await nodeAppears(client, freezeHeading);
+
+    // find Freeze button
+    const search = await DOM.performSearch({ query: "//h4[contains(., 'Streak Freeze')]/parent::li/button" });
+    if (search.resultCount !== 1) {
+      throw new Error(`${search.resultCount} Streak Freeze page headings found`);
+    }
+    const { nodeIds: buttonIds } = await DOM.getSearchResults({
+      fromIndex: 0,
+      searchId: search.searchId,
+      toIndex: 1,
+    });
+
+    // check if Freeze is available
+    const { attributes: buttonAttrs } = await DOM.getAttributes({ nodeId: buttonIds[0] });
+    if (!buttonAttrs.includes("disabled")) {
+      console.log("buy");
+    } else {
+      console.log("Freeze not available for purchase. exiting");
+      return;
+    }
     throw new Error(debugError);
   } catch (err) {
     const screenshot = await takeScreenshot(Page);
