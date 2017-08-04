@@ -5,8 +5,9 @@ import { Callback, Context } from "aws-lambda";
 import CDP = require("chrome-remote-interface");
 import fs = require("fs");
 
-const takeScreenshot = async (page: any): Promise<string> => {
-  const screenshot = await page.captureScreenshot();
+const takeScreenshot = async (client: any): Promise<string> => {
+  const {Page} = client;
+  const screenshot = await Page.captureScreenshot();
   const buffer = new Buffer(screenshot.data, "base64");
   const fileName = `/tmp/streakeeper-${new Date().getTime()}.png`;
   fs.writeFileSync(fileName, buffer, { encoding: "base64" });
@@ -150,7 +151,7 @@ const run = async () => {
     }
     throw new Error(debugError);
   } catch (err) {
-    const screenshot = await takeScreenshot(Page);
+    const screenshot = await takeScreenshot(client);
     console.log("screenshot saved to: " + screenshot);
     if (err.message !== debugError) {
       throw err;
