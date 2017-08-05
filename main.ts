@@ -5,7 +5,7 @@ import { Callback, Context } from "aws-lambda";
 import CDP = require("chrome-remote-interface");
 import fs = require("fs");
 
-const takeScreenshot = async (client: any): Promise<string> => {
+const takeScreenshot = async (client: ChromeRemoteInterface.Chrome): Promise<string> => {
   const { Page } = client;
   const screenshot = await Page.captureScreenshot();
   const buffer = new Buffer(screenshot.data, "base64");
@@ -14,14 +14,14 @@ const takeScreenshot = async (client: any): Promise<string> => {
   return fileName;
 };
 
-const center = (quad: any): any => {
+const center = (quad: number[]): number[] => {
   return [
     Math.floor(((quad[2] - quad[0]) / 2) + quad[0]),
     Math.floor(((quad[5] - quad[3]) / 2) + quad[3]),
   ];
 };
 
-const clickCenter = async (client: any, selector: string|number): Promise<void> => {
+const clickCenter = async (client: ChromeRemoteInterface.Chrome, selector: string|number): Promise<void> => {
   const { DOM, Input } = client;
   await new Promise((resolve) => setTimeout(resolve, 300));
   if (typeof selector === "string") {
@@ -50,7 +50,7 @@ const clickCenter = async (client: any, selector: string|number): Promise<void> 
   });
 };
 
-const typeIn = async (client: any, val: string): Promise<void> => {
+const typeIn = async (client: ChromeRemoteInterface.Chrome, val: string): Promise<void> => {
   const { Input } = client;
   for (const letter of val) {
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -65,7 +65,7 @@ const typeIn = async (client: any, val: string): Promise<void> => {
   }
 };
 
-const nodeAppears = async (client: any, selector: string) => {
+const nodeAppears = async (client: ChromeRemoteInterface.Chrome, selector: string) => {
   const poll = new Promise(async (resolve, _reject) => {
     const { DOM } = client;
     let selNodeId = 0;
