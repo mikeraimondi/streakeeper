@@ -6,7 +6,7 @@ import CDP = require("chrome-remote-interface");
 import fs = require("fs");
 
 const takeScreenshot = async (client: any): Promise<string> => {
-  const {Page} = client;
+  const { Page } = client;
   const screenshot = await Page.captureScreenshot();
   const buffer = new Buffer(screenshot.data, "base64");
   const fileName = `/tmp/streakeeper-${new Date().getTime()}.png`;
@@ -21,15 +21,18 @@ const center = (quad: any): any => {
   ];
 };
 
-const clickCenter = async (client: any, selector: string): Promise<void> => {
+const clickCenter = async (client: any, selector: string|number): Promise<void> => {
   const { DOM, Input } = client;
   await new Promise((resolve) => setTimeout(resolve, 300));
-  const { root: { nodeId: docNodeId } } = await DOM.getDocument();
-  const { nodeId: selNodeId } = await DOM.querySelector({
-    nodeId: docNodeId,
-    selector,
-  });
-  const { model: { content: quad } } = await DOM.getBoxModel({ nodeId: selNodeId });
+  if (typeof selector === "string") {
+    const { root: { nodeId: docNodeId } } = await DOM.getDocument();
+    const element = await DOM.querySelector({
+      nodeId: docNodeId,
+      selector,
+    });
+    selector = element.nodeId;
+  }
+  const { model: { content: quad } } = await DOM.getBoxModel({ nodeId: selector });
   const elementCenter = center(quad);
   await Input.dispatchMouseEvent({
     button: "left",
@@ -125,6 +128,7 @@ const run = async () => {
     await Page.loadEventFired();
 
     // visit store
+    // TODO handle "$LANGUAGE is not yet supported on the web" page
     await Page.navigate({ url: "https://www.duolingo.com/show_store" });
     await Page.loadEventFired();
     const freezeHeading = "ul h4";
@@ -140,11 +144,13 @@ const run = async () => {
       searchId: search.searchId,
       toIndex: 1,
     });
+    const buttonId = buttonIds[0];
 
     // check if Freeze is available
-    const { attributes: buttonAttrs } = await DOM.getAttributes({ nodeId: buttonIds[0] });
+    const { attributes: buttonAttrs } = await DOM.getAttributes({ nodeId: buttonId });
     if (!buttonAttrs.includes("disabled")) {
-      console.log("buy");
+      await clickCenter(client, buttonId);
+      console.log("Freeze purchased");
     } else {
       console.log("Freeze not available for purchase. exiting");
       return;
