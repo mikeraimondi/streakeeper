@@ -97,7 +97,6 @@ const run = async () => {
   const chrome = await launchChrome({
     flags: [
       "--window-size=1280x1696",
-      "--ignore-certificate-errors",
       "--headless",
       "--disable-gpu",
     ],
