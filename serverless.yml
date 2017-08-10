@@ -22,12 +22,14 @@ plugins:
 
 provider:
   name: aws
+  stage: production
   runtime: nodejs6.10
   profile: personalServerlessAdmin
   region: us-east-2
   environment:
     login: ${env:DL_LOGIN}
     password: ${env:DL_PW}
+    DEBUG: '*'
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:

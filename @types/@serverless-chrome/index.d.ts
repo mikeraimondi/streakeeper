@@ -4,6 +4,7 @@ declare module "@serverless-chrome/lambda" {
     flags?: string[];
   }
   interface Chrome {
+    port: number,
     kill(): void;
   }
   function index(a: ChromeOptions): Promise<Chrome>;

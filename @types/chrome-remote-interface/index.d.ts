@@ -114,6 +114,13 @@ declare namespace ChromeRemoteInterface {
 declare module "chrome-remote-interface" {
   import Chrome = ChromeRemoteInterface.Chrome
   export = index;
-  function index(params: { target: string }): Chrome;
+  function index(params?: {
+    host?: string,
+    port?: number,
+    secure?: boolean,
+    target?: string,
+    protocol?: any,
+    remote?: boolean
+  }): Chrome;
 
 }

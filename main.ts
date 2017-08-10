@@ -21,7 +21,7 @@ const center = (quad: number[]): number[] => {
   ];
 };
 
-const clickCenter = async (client: ChromeRemoteInterface.Chrome, selector: string|number): Promise<void> => {
+const clickCenter = async (client: ChromeRemoteInterface.Chrome, selector: string | number): Promise<void> => {
   const { DOM, Input } = client;
   await new Promise((resolve) => setTimeout(resolve, 300));
   if (typeof selector === "string") {
@@ -101,69 +101,73 @@ const run = async () => {
       "--disable-gpu",
     ],
   });
-  const browser = await CDP({ target: "ws://localhost:9222/devtools/browser" });
-  const { Target } = browser;
-  const { browserContextId } = await Target.createBrowserContext();
-  const { targetId } = await Target.createTarget({
-    browserContextId,
-    url: "about:blank",
-  });
-  const client = await CDP({ target: targetId });
-  const { DOM, Page, Network, Runtime } = client;
-  await Page.enable();
-  await DOM.enable();
-  await Network.enable();
-  await Runtime.enable();
-
-  await Page.navigate({ url: "https://www.duolingo.com" });
-  await Page.loadEventFired();
   try {
-    // login
-    await clickCenter(client, "#sign-in-btn");
-    await typeIn(client, process.env.login);
-    await clickCenter(client, "#top_password");
-    await typeIn(client, process.env.password);
-    await clickCenter(client, "#login-button");
-    await Page.loadEventFired();
-
-    // visit store
-    // TODO handle "$LANGUAGE is not yet supported on the web" page
-    await Page.navigate({ url: "https://www.duolingo.com/show_store" });
-    await Page.loadEventFired();
-    const freezeHeading = "ul h4";
-    await nodeAppears(client, freezeHeading);
-
-    // find Freeze button
-    const search = await DOM.performSearch({ query: "//h4[contains(., 'Streak Freeze')]/parent::li/button" });
-    if (search.resultCount !== 1) {
-      throw new Error(`${search.resultCount} Streak Freeze page headings found`);
-    }
-    const { nodeIds: buttonIds } = await DOM.getSearchResults({
-      fromIndex: 0,
-      searchId: search.searchId,
-      toIndex: 1,
+    const browser = await CDP({ port: chrome.port });
+    const { Target } = browser;
+    const { browserContextId } = await Target.createBrowserContext();
+    const { targetId } = await Target.createTarget({
+      browserContextId,
+      url: "about:blank",
     });
-    const buttonId = buttonIds[0];
+    const client = await CDP({ target: targetId });
+    const { DOM, Page, Network, Runtime } = client;
 
-    // check if Freeze is available
-    const { attributes: buttonAttrs } = await DOM.getAttributes({ nodeId: buttonId });
-    if (!buttonAttrs.includes("disabled")) {
-      await clickCenter(client, buttonId);
-      console.log("Freeze purchased");
-    } else {
-      console.log("Freeze not available for purchase. exiting");
-      return;
-    }
-    throw new Error(debugError);
-  } catch (err) {
-    const screenshot = await takeScreenshot(client);
-    console.log("screenshot saved to: " + screenshot);
-    if (err.message !== debugError) {
-      throw err;
+    try {
+      await Page.enable();
+      await DOM.enable();
+      await Network.enable();
+      await Runtime.enable();
+
+      // login
+      await Page.navigate({ url: "https://www.duolingo.com" });
+      await Page.loadEventFired();
+      await clickCenter(client, "#sign-in-btn");
+      await typeIn(client, process.env.login);
+      await clickCenter(client, "#top_password");
+      await typeIn(client, process.env.password);
+      await clickCenter(client, "#login-button");
+      await Page.loadEventFired();
+
+      // visit store
+      // TODO handle "$LANGUAGE is not yet supported on the web" page
+      await Page.navigate({ url: "https://www.duolingo.com/show_store" });
+      await Page.loadEventFired();
+      const freezeHeading = "ul h4";
+      await nodeAppears(client, freezeHeading);
+
+      // find Freeze button
+      const search = await DOM.performSearch({ query: "//h4[contains(., 'Streak Freeze')]/parent::li/button" });
+      if (search.resultCount !== 1) {
+        throw new Error(`${search.resultCount} Streak Freeze page headings found`);
+      }
+      const { nodeIds: buttonIds } = await DOM.getSearchResults({
+        fromIndex: 0,
+        searchId: search.searchId,
+        toIndex: 1,
+      });
+      const buttonId = buttonIds[0];
+
+      // check if Freeze is available
+      const { attributes: buttonAttrs } = await DOM.getAttributes({ nodeId: buttonId });
+      if (!buttonAttrs.includes("disabled")) {
+        await clickCenter(client, buttonId);
+        console.log("Freeze purchased");
+      } else {
+        console.log("Freeze not available for purchase. exiting");
+        return;
+      }
+      throw new Error(debugError);
+    } catch (err) {
+      const screenshot = await takeScreenshot(client);
+      console.log("screenshot saved to: " + screenshot);
+      if (err.message !== debugError) {
+        throw err;
+      }
+    } finally {
+      await Target.closeTarget({ targetId });
+      await browser.close();
     }
   } finally {
-    await Target.closeTarget({ targetId });
-    await browser.close();
     await chrome.kill();
   }
 };
