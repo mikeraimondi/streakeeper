@@ -94,6 +94,7 @@ const nodeAppears = async (client: ChromeRemoteInterface.Chrome, selector: strin
 
 const run = async () => {
   const debugError = "debugError";
+  console.log("launching Chrome");
   const chrome = await launchChrome({
     flags: [
       "--window-size=1280x1696",
@@ -102,6 +103,7 @@ const run = async () => {
     ],
   });
   try {
+    console.log("connecting to browser");
     const browser = await CDP({ port: chrome.port });
     const { Target } = browser;
     const { browserContextId } = await Target.createBrowserContext();
@@ -109,18 +111,23 @@ const run = async () => {
       browserContextId,
       url: "about:blank",
     });
+    console.log("connecting to anonymous target");
     const client = await CDP({ target: targetId });
     const { DOM, Page, Network, Runtime } = client;
 
     try {
+      console.log("enabling domains");
       await Page.enable();
       await DOM.enable();
       await Network.enable();
       await Runtime.enable();
 
       // login
+      console.log("logging in");
       await Page.navigate({ url: "https://www.duolingo.com" });
+      console.log("loading log in page");
       await Page.loadEventFired();
+      console.log("log in page loaded");
       await clickCenter(client, "#sign-in-btn");
       await typeIn(client, process.env.login);
       await clickCenter(client, "#top_password");
@@ -130,12 +137,14 @@ const run = async () => {
 
       // visit store
       // TODO handle "$LANGUAGE is not yet supported on the web" page
+      console.log("visiting store");
       await Page.navigate({ url: "https://www.duolingo.com/show_store" });
       await Page.loadEventFired();
       const freezeHeading = "ul h4";
       await nodeAppears(client, freezeHeading);
 
       // find Freeze button
+      console.log("finding Freeze button");
       const search = await DOM.performSearch({ query: "//h4[contains(., 'Streak Freeze')]/parent::li/button" });
       if (search.resultCount !== 1) {
         throw new Error(`${search.resultCount} Streak Freeze page headings found`);
@@ -148,6 +157,7 @@ const run = async () => {
       const buttonId = buttonIds[0];
 
       // check if Freeze is available
+      console.log("checking Freeze availability");
       const { attributes: buttonAttrs } = await DOM.getAttributes({ nodeId: buttonId });
       if (!buttonAttrs.includes("disabled")) {
         await clickCenter(client, buttonId);
