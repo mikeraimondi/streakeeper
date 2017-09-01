@@ -1,1 +1,1 @@
-worker: node index.js
+scheduled: node index.js
