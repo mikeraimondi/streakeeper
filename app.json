@@ -1,0 +1,28 @@
+{
+  "name": "streakeeper",
+  "description": "keep the streak",
+  "repository": "https://github.com/mikeraimondi/streakeeper",
+  "addons": [
+    {
+      "plan": "scheduler:standard"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/mikeraimondi/heroku-buildpack-google-chrome"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "DL_LOGIN": {
+      "description": "Duolingo username",
+      "value": "changeme"
+    },
+    "DL_PW": {
+      "description": "Duolingo password",
+      "value": "changeme"
+    }
+  }
+}
