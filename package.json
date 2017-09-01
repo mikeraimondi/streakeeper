@@ -2,22 +2,16 @@
   "name": "streakeeper",
   "version": "1.0.0",
   "description": "keep the streak",
-  "main": "handler.js",
-  "dependencies": {
-    "@serverless-chrome/lambda": "^1.0.0-5",
-    "chrome-remote-interface": "^0.23.3",
-    "source-map-support": "^0.4.15"
-  },
-  "devDependencies": {
-    "@types/aws-lambda": "^0.0.14",
-    "chrome-launcher": "^0.2.1",
-    "serverless-plugin-typescript": "^0.4.0",
-    "tslint": "^5.4.3",
-    "typescript": "^2.4.1"
-  },
-  "scripts": {
-    "dev": "SLS_DEBUG=* serverless invoke local -f main"
+  "main": "index.js",
+  "engines": {
+    "node": "8.3.0"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^4.5.0"
+  },
+  "dependencies": {
+    "puppeteer": "^0.10.1"
+  }
 }
