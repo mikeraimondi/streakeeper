@@ -10,7 +10,7 @@
     "extends": "eslint:recommended",
     "rules": {
         "no-console": "off",
-        "semi": 2,
-        "quotes": "error"
+        "semi": "warn",
+        "quotes": "warn"
     }
 }

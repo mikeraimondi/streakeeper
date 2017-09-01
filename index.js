@@ -16,16 +16,28 @@ const puppeteer = require("puppeteer");
     await page.click("#login-button");
     await page.waitForNavigation();
 
+    // check for unsupported language
+    const unsupportedMsg = await page.$(".unsupported-message")
+    if (unsupportedMsg) {
+      console.log("current language is not supported on web. proceeding by choosing alternative language")
+      await page.click(".choose-language")
+      await page.waitForNavigation();
+    }
+
     // visit store
-    // TODO handle "$LANGUAGE is not yet supported on the web" page
     console.log("visiting store");
     await page.goto("https://www.duolingo.com/show_store", { waitUntil: "networkidle" });
 
     // find Freeze button
     console.log("finding Freeze button");
-    const button = await page.$("ul button");
-    if (!button) {
-      throw new Error("Error: Freeze button not found");
+    const button = await page.$("ul li button");
+    if (button) {
+      const buttonText = await button.evaluate((e) => { return e.parentElement.querySelector("h4").textContent; });
+      if (buttonText !== "Streak Freeze") {
+        throw new Error("Error: Freeze button not found");
+      }
+    } else {
+      throw new Error("page format not recognized")
     }
 
     // check if Freeze is available
@@ -41,6 +53,7 @@ const puppeteer = require("puppeteer");
   } catch (err) {
     const text = await page.plainText();
     console.log(text);
+    throw err;
   } finally {
     browser.close();
   }
