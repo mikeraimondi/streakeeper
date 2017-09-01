@@ -24,5 +24,6 @@
       "description": "Duolingo password",
       "value": "changeme"
     }
-  }
+  },
+  "success_url": "https://scheduler.heroku.com/dashboard"
 }
