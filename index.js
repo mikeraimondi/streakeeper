@@ -4,6 +4,7 @@ const puppeteer = require("puppeteer");
   console.log("launching Chrome");
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
   const page = await browser.newPage();
+  page.setViewport({ width: 1280, height: 721 });
 
   try {
     // login
@@ -17,10 +18,10 @@ const puppeteer = require("puppeteer");
     await page.waitForNavigation();
 
     // check for unsupported language
-    const unsupportedMsg = await page.$(".unsupported-message")
+    const unsupportedMsg = await page.$(".unsupported-message");
     if (unsupportedMsg) {
-      console.log("current language is not supported on web. proceeding by choosing alternative language")
-      await page.click(".choose-language")
+      console.log("current language is not supported on web. proceeding by choosing alternative language");
+      await page.click(".choose-language");
       await page.waitForNavigation();
     }
 
@@ -37,7 +38,7 @@ const puppeteer = require("puppeteer");
         throw new Error("Error: Freeze button not found");
       }
     } else {
-      throw new Error("page format not recognized")
+      throw new Error("page format not recognized");
     }
 
     // check if Freeze is available
