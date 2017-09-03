@@ -3,9 +3,7 @@
   "description": "keep the streak",
   "repository": "https://github.com/mikeraimondi/streakeeper",
   "addons": [
-    {
-      "plan": "scheduler:standard"
-    }
+    "temporize"
   ],
   "buildpacks": [
     {
@@ -25,5 +23,7 @@
       "value": "changeme"
     }
   },
-  "success_url": "https://scheduler.heroku.com/dashboard"
+  "scripts": {
+    "postdeploy": "yarn run setup"
+  }
 }

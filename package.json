@@ -19,6 +19,7 @@
     "puppeteer": "^0.10.1"
   },
   "scripts": {
-    "test": "echo 'TODO'"
+    "test": "echo 'TODO'",
+    "setup": "node setup.js"
   }
 }
