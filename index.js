@@ -46,6 +46,7 @@ const puppeteer = require("puppeteer");
     const disabled = await button.evaluate((e) => { return e.disabled; });
     if (!disabled) {
       await button.click();
+      await page.waitForNavigation({ waitUntil: "networkidle" });
       console.log("Freeze purchased");
     } else {
       console.log("Freeze not available for purchase. exiting");
