@@ -52,14 +52,15 @@ const puppeteer = require("puppeteer");
       console.log("Freeze not available for purchase. exiting");
       return;
     }
-  } catch (err) {
-    const text = await page.plainText();
-    console.log(text);
-    throw err;
+  } catch (e) {
+    console.error(e);
+    const html = await page.content();
+    console.log("raw HTML:\n" + html);
+    throw e;
   } finally {
     browser.close();
   }
 })().then(() => { process.exit(); })
-  .catch((e) => {
-    console.error(e);
+  .catch(() => {
+    process.exit(1);
   });
