@@ -1,7 +1,7 @@
-const https = require("https");
 const express = require("express");
 const app = express();
 const puppeteer = require("puppeteer");
+const request = require("request");
 
 const template = (msg) => {
   return `<!DOCTYPE html>
@@ -22,20 +22,7 @@ app.get("/setup", (req, res) => {
     const cron = encodeURIComponent("0 5 * * ?");
     // TODO twice daily
     const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${encodeURIComponent(callback)}`;
-    await new Promise((resolve, reject) => {
-      const request = https.request(url, (response) => {
-        if (response.statusCode < 200 || response.statusCode > 299) {
-          reject(new Error("Failed to load page, status code: " + response.statusCode));
-        }
-        const body = [];
-        response.on("data", (chunk) => body.push(chunk));
-        response.on("end", () => {
-          const res = JSON.parse(body.join(""));
-          resolve(res);
-        });
-      });
-      request.on("error", (err) => reject(err));
-    });
+    await request.post(url);
   })().then(() => {
     res.redirect(callback);
   }).catch(() => {
