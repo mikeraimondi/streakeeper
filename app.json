@@ -23,7 +23,5 @@
       "value": "changeme"
     }
   },
-  "scripts": {
-    "postdeploy": "yarn run setup"
-  }
+  "success_url": "/setup"
 }
