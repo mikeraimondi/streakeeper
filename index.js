@@ -46,14 +46,14 @@ app.get("/streakeep", (req, res) => {
       await page.focus("#top_password");
       await page.type(process.env.DL_PW);
       await page.click("#login-button");
-      await page.waitForNavigation();
+      await page.waitForNavigation({ timeout: 10000 });
 
       // check for unsupported language
       const unsupportedMsg = await page.$(".unsupported-message");
       if (unsupportedMsg) {
         console.log("current language is not supported on web. proceeding by choosing alternative language");
         await page.click(".choose-language");
-        await page.waitForNavigation();
+        await page.waitForNavigation({ timeout: 10000 });
       }
 
       // visit store
