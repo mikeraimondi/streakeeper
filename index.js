@@ -26,7 +26,7 @@ app.get("/setup", (req, res) => {
   })().then(() => {
     res.redirect(callback);
   }).catch(() => {
-    res.status("500").send(template("Sorry, there was an error with the scheduler service. Setup aborted."));
+    res.send(template("Sorry, there was an error with the scheduler service. Setup aborted."));
   });
 });
 
@@ -92,9 +92,9 @@ app.get("/streakeep", (req, res) => {
       browser.close();
     }
   })().then(() => {
-    res.status("200").send(template("All systems go!"));
+    res.send(template("All systems go!"));
   }).catch(() => {
-    res.status("500").send(template("Sorry, there was an error. Please double check your login credentials."));
+    res.send(template("Sorry, there was an error. Please double check your login credentials."));
   });
 });
 
