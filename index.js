@@ -27,9 +27,9 @@ const streakeep = async () => {
     console.log("logging in");
     await page.goto("https://www.duolingo.com");
     await page.click("#sign-in-btn");
-    await page.type(process.env.DL_LOGIN);
+    await page.type(process.env.USERNAME);
     await page.focus("#top_password");
-    await page.type(process.env.DL_PW);
+    await page.type(process.env.PASSWORD);
     await page.click("#login-button");
     await page.waitForNavigation({ timeout: 10000 });
 

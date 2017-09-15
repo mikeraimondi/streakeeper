@@ -14,12 +14,12 @@
     }
   ],
   "env": {
-    "DL_LOGIN": {
-      "description": "Duolingo username",
+    "USERNAME": {
+      "description": "Your Duolingo username. Credentials are stored on your app.",
       "value": "changeme"
     },
-    "DL_PW": {
-      "description": "Duolingo password",
+    "PASSWORD": {
+      "description": "Duolingo password. Credentials are stored on your app. Please don't re-use passwords.",
       "value": "changeme"
     }
   },
