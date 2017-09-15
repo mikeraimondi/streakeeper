@@ -80,21 +80,17 @@ const streakeep = async () => {
 
 app.get("/setup", (req, res) => {
   (async () => {
+    await streakeep();
+    // TODO twice daily
     const cron = encodeURIComponent("0 5 * * ?");
     const callback = encodeURIComponent(`http://${req.get("host")}/streakeep`);
-    // TODO twice daily
     const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${callback}`;
     await request.post(url);
   })().then(() => {
-    streakeep().then(() => {
-      res.send(template("All systems go!"));
-    }).catch((err) => {
-      console.error(err);
-      res.send(template("Sorry, there was an error. Please double check your login credentials."));
-    });
+    res.send(template("All systems go!"));
   }).catch((err) => {
     console.error(err);
-    res.send(template("Sorry, there was an error with the scheduler service. Setup aborted."));
+    res.send(template("Sorry, there was an error. Please double check your login credentials."));
   });
 });
 
