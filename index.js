@@ -87,7 +87,7 @@ app.get("/setup", (req, res) => {
     const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${callback}`;
     await request.post(url);
   })().then(() => {
-    res.send(template("All systems go!"));
+    res.send(template("Streakeeper is now set up. You may close this browser window."));
   }).catch((err) => {
     console.error(err);
     res.send(template("Sorry, there was an error. Please double check your login credentials."));
