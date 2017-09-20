@@ -31,14 +31,14 @@ const streakeep = async () => {
     await page.focus("#top_password");
     await page.type(process.env.PASSWORD);
     await page.click("#login-button");
-    await page.waitForNavigation({ timeout: 10000 });
+    await page.waitForNavigation({ waitUntil: "networkidle" });
 
     // check for unsupported language
     const unsupportedMsg = await page.$(".unsupported-message");
     if (unsupportedMsg) {
       console.log("current language is not supported on web. proceeding by choosing alternative language");
       await page.click(".choose-language");
-      await page.waitForNavigation({ timeout: 10000 });
+      await page.waitForNavigation({ waitUntil: "networkidle" });
     }
 
     // visit store
