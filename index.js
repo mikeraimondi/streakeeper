@@ -31,19 +31,20 @@ const streakeep = async () => {
     await page.focus("#top_password");
     await page.type(process.env.PASSWORD);
     await page.click("#login-button");
-    await page.waitForNavigation({ waitUntil: "networkidle" });
+    const waitOptions = { waitUntil: "networkidle", networkIdleTimeout: 5000 };
+    await page.waitForNavigation(waitOptions);
 
     // check for unsupported language
     const unsupportedMsg = await page.$(".unsupported-message");
     if (unsupportedMsg) {
       console.log("current language is not supported on web. proceeding by choosing alternative language");
       await page.click(".choose-language");
-      await page.waitForNavigation({ waitUntil: "networkidle" });
+      await page.waitForNavigation(waitOptions);
     }
 
     // visit store
     console.log("visiting store");
-    await page.goto("https://www.duolingo.com/show_store", { waitUntil: "networkidle" });
+    await page.goto("https://www.duolingo.com/show_store", waitOptions);
 
     // find Freeze button
     console.log("finding Freeze button");
@@ -62,7 +63,7 @@ const streakeep = async () => {
     const disabled = await button.evaluate((e) => { return e.disabled; });
     if (!disabled) {
       await button.click();
-      await page.waitForNavigation({ waitUntil: "networkidle" });
+      await page.waitForNavigation(waitOptions);
       console.log("Freeze purchased");
     } else {
       console.log("Freeze not available for purchase");
