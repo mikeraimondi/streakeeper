@@ -73,6 +73,19 @@ const streakeep = async () => {
     console.error(e);
     const html = await page.content();
     console.log("raw HTML:\n" + html);
+    if (process.env.DEBUG) {
+      const AWS = require("aws-sdk");
+      const s3 = new AWS.S3();
+      const key = `screenshot-${(new Date()).getTime()}.png`;
+      const screenshot = await page.screenshot();
+      const params = {
+        Bucket: "streakeeper-debug",
+        Key: key,
+        Body: screenshot
+      };
+      await s3.upload(params).promise();
+      console.log(`uploaded screenshot: ${key}`);
+    }
     throw e;
   } finally {
     browser.close();
