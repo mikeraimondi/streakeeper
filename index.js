@@ -73,7 +73,7 @@ const streakeep = async () => {
     console.error(e);
     const html = await page.content();
     console.log("raw HTML:\n" + html);
-    if (process.env.DEBUG) {
+    if (process.env.DEBUG === "*" || process.env.DEBUG === "img") {
       const AWS = require("aws-sdk");
       const s3 = new AWS.S3();
       const key = `screenshot-${(new Date()).getTime()}.png`;
