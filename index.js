@@ -71,20 +71,31 @@ const streakeep = async () => {
     }
   } catch (e) {
     console.error(e);
-    const html = await page.content();
-    console.log("raw HTML:\n" + html);
-    if (process.env.DEBUG === "*" || process.env.DEBUG === "img") {
-      const AWS = require("aws-sdk");
-      const s3 = new AWS.S3();
-      const key = `screenshot-${(new Date()).getTime()}.png`;
-      const screenshot = await page.screenshot();
-      const params = {
-        Bucket: "streakeeper-debug",
-        Key: key,
-        Body: screenshot
-      };
-      await s3.upload(params).promise();
-      console.log(`uploaded screenshot: ${key}`);
+    if (process.env.DEBUG) {
+      const content = await page.content();
+      const compressed = await new Promise((resolve, reject) => {
+        const zlib = require("zlib");
+        zlib.gzip(content, (err, result) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(result);
+        });
+      });
+      console.log("compressed HTML: " + compressed.toString("base64"));
+      if (process.env.DEBUG === "*" || process.env.DEBUG === "img") {
+        const AWS = require("aws-sdk");
+        const s3 = new AWS.S3();
+        const key = `screenshot-${(new Date()).getTime()}.png`;
+        const screenshot = await page.screenshot();
+        const params = {
+          Bucket: "streakeeper-debug",
+          Key: key,
+          Body: screenshot
+        };
+        await s3.upload(params).promise();
+        console.log(`uploaded screenshot: ${key}`);
+      }
     }
     throw e;
   } finally {
