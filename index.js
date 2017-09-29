@@ -16,6 +16,20 @@ const template = (msg) => {
 </html>`;
 };
 
+const screenshot = async (page) => {
+  const AWS = require("aws-sdk");
+  const s3 = new AWS.S3();
+  const key = `screenshot-${(new Date()).getTime()}.png`;
+  const screenshot = await page.screenshot();
+  const params = {
+    Bucket: "streakeeper-debug",
+    Key: key,
+    Body: screenshot
+  };
+  await s3.upload(params).promise();
+  console.log(`uploaded screenshot: ${key}`);
+}
+
 const streakeep = async () => {
   console.log("launching Chrome");
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
@@ -31,7 +45,7 @@ const streakeep = async () => {
     await page.focus("#top_password");
     await page.type(process.env.PASSWORD);
     await page.click("#login-button");
-    const waitOptions = { waitUntil: "networkidle", networkIdleTimeout: 5000 };
+    const waitOptions = { waitUntil: "networkidle", networkIdleTimeout: 2000 };
     await page.waitForNavigation(waitOptions);
 
     // check for unsupported language
@@ -67,7 +81,9 @@ const streakeep = async () => {
       console.log("Freeze purchased");
     } else {
       console.log("Freeze not available for purchase");
-      return;
+    }
+    if (process.env.DEBUG === "*" || process.env.DEBUG === "img:*") {
+      await screenshot(page)
     }
   } catch (e) {
     console.error(e);
@@ -84,22 +100,12 @@ const streakeep = async () => {
       });
       console.log("compressed HTML: " + compressed.toString("base64"));
       if (process.env.DEBUG === "*" || process.env.DEBUG === "img") {
-        const AWS = require("aws-sdk");
-        const s3 = new AWS.S3();
-        const key = `screenshot-${(new Date()).getTime()}.png`;
-        const screenshot = await page.screenshot();
-        const params = {
-          Bucket: "streakeeper-debug",
-          Key: key,
-          Body: screenshot
-        };
-        await s3.upload(params).promise();
-        console.log(`uploaded screenshot: ${key}`);
+        await screenshot(page)
       }
     }
     throw e;
   } finally {
-    browser.close();
+    await browser.close();
   }
 };
 
