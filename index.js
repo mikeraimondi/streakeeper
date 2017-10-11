@@ -113,7 +113,7 @@ app.get("/setup", (req, res) => {
   (async () => {
     await streakeep();
     // TODO twice daily
-    const cron = encodeURIComponent("0 5 * * ?");
+    const cron = encodeURIComponent("0 8 * * ?");
     const callback = encodeURIComponent(`http://${req.get("host")}/streakeep`);
     const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${callback}`;
     await request.post(url);
