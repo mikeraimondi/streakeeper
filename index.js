@@ -28,7 +28,7 @@ const screenshot = async (page) => {
   };
   await s3.upload(params).promise();
   console.log(`uploaded screenshot: ${key}`);
-}
+};
 
 const streakeep = async () => {
   console.log("launching Chrome");
@@ -83,7 +83,7 @@ const streakeep = async () => {
       console.log("Freeze not available for purchase");
     }
     if (process.env.DEBUG === "*" || process.env.DEBUG === "img:*") {
-      await screenshot(page)
+      await screenshot(page);
     }
   } catch (e) {
     console.error(e);
@@ -100,7 +100,7 @@ const streakeep = async () => {
       });
       console.log("compressed HTML: " + compressed.toString("base64"));
       if (process.env.DEBUG === "*" || process.env.DEBUG === "img") {
-        await screenshot(page)
+        await screenshot(page);
       }
     }
     throw e;
