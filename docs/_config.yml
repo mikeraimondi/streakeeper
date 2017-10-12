@@ -1,0 +1,8 @@
+title: Streakeeper
+description: >
+  Streakeeper helps keep your Duolingo streak by automatically
+  buying a Freeze every day, even if you forget or can't access
+  the internet that day.
+show_downloads: true
+
+theme: jekyll-theme-minimal
