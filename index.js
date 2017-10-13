@@ -3,19 +3,6 @@ const app = express();
 const puppeteer = require("puppeteer");
 const request = require("request");
 
-const template = (msg) => {
-  return `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Streakeeper</title>
-  </head>
-  <body>
-    ${msg}
-  </body>
-</html>`;
-};
-
 const screenshot = async (page) => {
   const AWS = require("aws-sdk");
   const s3 = new AWS.S3();
@@ -118,10 +105,10 @@ app.get("/setup", (req, res) => {
     const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${callback}`;
     await request.post(url);
   })().then(() => {
-    res.send(template("Streakeeper is now set up. You may close this browser window."));
+    res.redirect(`${process.env.HOME}/success`);
   }).catch((err) => {
     console.error(err);
-    res.send(template("Sorry, there was an error. Please double check your login credentials."));
+    res.redirect(`${process.env.HOME}/error`);
   });
 });
 
