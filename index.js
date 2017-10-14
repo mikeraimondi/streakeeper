@@ -105,10 +105,10 @@ app.get("/setup", (req, res) => {
     const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${callback}`;
     await request.post(url);
   })().then(() => {
-    res.redirect(`${process.env.HOME}/success`);
+    res.redirect(`${process.env.DOCS_URL}/success`);
   }).catch((err) => {
     console.error(err);
-    res.redirect(`${process.env.HOME}/error`);
+    res.redirect(`${process.env.DOCS_URL}/error`);
   });
 });
 

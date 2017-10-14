@@ -22,7 +22,7 @@
       "description": "Duolingo password. Credentials are stored on your app. Please don't re-use passwords.",
       "value": "changeme"
     },
-    "HOME": {
+    "DOCS_URL": {
       "description": "Used for first-time setup. Should not be changed.",
       "value": ""
     }
