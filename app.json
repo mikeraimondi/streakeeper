@@ -28,7 +28,7 @@
     },
     "DOCS_URL": {
       "description": "Used for first-time setup. Should not be changed.",
-      "value": ""
+      "value": "https://streakeeper.com"
     }
   },
   "success_url": "/setup"
