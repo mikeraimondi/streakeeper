@@ -22,6 +22,10 @@
       "description": "Duolingo password. Credentials are stored on your app. Please don't re-use passwords.",
       "value": "changeme"
     },
+    "HOUR_TO_RUN": {
+      "description": "Hour of day to run, in UTC.",
+      "value": "3"
+    },
     "DOCS_URL": {
       "description": "Used for first-time setup. Should not be changed.",
       "value": ""

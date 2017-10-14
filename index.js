@@ -60,6 +60,9 @@ const streakeep = async () => {
     }
 
     // check if Freeze is available
+    if (process.env.DEBUG === "*" || process.env.DEBUG === "img:*") {
+      await screenshot(page);
+    }
     console.log("checking Freeze availability");
     const disabled = await button.evaluate((e) => { return e.disabled; });
     if (!disabled) {
@@ -100,7 +103,7 @@ app.get("/setup", (req, res) => {
   (async () => {
     await streakeep();
     // TODO twice daily
-    const cron = encodeURIComponent("0 8 * * ?");
+    const cron = encodeURIComponent(`0 ${process.env.HOUR_TO_RUN} * * ?`);
     const callback = encodeURIComponent(`http://${req.get("host")}/streakeep`);
     const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${callback}`;
     await request.post(url);
