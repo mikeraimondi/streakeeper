@@ -1,7 +1,7 @@
 {
   "name": "streakeeper",
-  "description": "keep the streak",
-  "repository": "https://github.com/mikeraimondi/streakeeper",
+  "description": "Streakeeper keeps your Duolingo streak.",
+  "repository": "https://github.com/streakeeper/streakeeper",
   "addons": [
     "temporize"
   ],
