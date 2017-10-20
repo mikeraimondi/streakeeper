@@ -26,6 +26,10 @@
       "description": "Hour of day to run, in UTC.",
       "value": "3"
     },
+    "MINUTE_TO_RUN": {
+      "description": "Minute of hour to run, in UTC.",
+      "value": "45"
+    },
     "DOCS_URL": {
       "description": "Used for first-time setup. Should not be changed.",
       "value": "https://streakeeper.com"

@@ -59,21 +59,27 @@ const streakeep = async () => {
       throw new Error("page format not recognized");
     }
 
-    // check if Freeze is available
-    if (process.env.DEBUG === "*" || process.env.DEBUG === "img:*") {
-      await screenshot(page);
-    }
-    console.log("checking Freeze availability");
-    const disabled = await button.evaluate((e) => { return e.disabled; });
-    if (!disabled) {
-      await button.click();
-      await page.waitForNavigation(waitOptions);
-      console.log("Freeze purchased");
+    // check if we should buy a Freeze
+    const goalMetIndex = await page.evaluate(() => { return document.documentElement.innerHTML.indexOf("xp goal met"); });
+    if (goalMetIndex < 0) {
+      // check if Freeze is available
+      if (process.env.DEBUG === "*" || process.env.DEBUG === "img:*") {
+        await screenshot(page);
+      }
+      console.log("checking Freeze availability");
+      const disabled = await button.evaluate((e) => { return e.disabled; });
+      if (!disabled) {
+        await button.click();
+        await page.waitForNavigation(waitOptions);
+        console.log("Freeze purchased");
+      } else {
+        console.log("Freeze not available for purchase");
+      }
+      if (process.env.DEBUG === "*" || process.env.DEBUG === "img:*") {
+        await screenshot(page);
+      }
     } else {
-      console.log("Freeze not available for purchase");
-    }
-    if (process.env.DEBUG === "*" || process.env.DEBUG === "img:*") {
-      await screenshot(page);
+      console.log("Goal met. Freeze not required.");
     }
   } catch (e) {
     console.error(e);
@@ -102,8 +108,7 @@ const streakeep = async () => {
 app.get("/setup", (req, res) => {
   (async () => {
     await streakeep();
-    // TODO twice daily
-    const cron = encodeURIComponent(`0 ${process.env.HOUR_TO_RUN} * * ?`);
+    const cron = encodeURIComponent(`${process.env.MINUTE_TO_RUN} ${process.env.HOUR_TO_RUN} * * ?`);
     const callback = encodeURIComponent(`http://${req.get("host")}/streakeep`);
     const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${callback}`;
     await request.post(url);
