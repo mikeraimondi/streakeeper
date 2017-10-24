@@ -17,7 +17,7 @@ const screenshot = async (page) => {
   console.log(`uploaded screenshot: ${key}`);
 };
 
-const streakeep = async () => {
+const streakeep = async (options = {}) => {
   console.log("launching Chrome");
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
   const page = await browser.newPage();
@@ -69,9 +69,13 @@ const streakeep = async () => {
       console.log("checking Freeze availability");
       const disabled = await button.evaluate((e) => { return e.disabled; });
       if (!disabled) {
-        await button.click();
-        await page.waitForNavigation(waitOptions);
-        console.log("Freeze purchased");
+        if (options.dryRun) {
+          console.log("dry run: Freeze not purchased");
+        } else {
+          await button.click();
+          await page.waitForNavigation(waitOptions);
+          console.log("Freeze purchased");
+        }
       } else {
         console.log("Freeze not available for purchase");
       }
@@ -107,7 +111,7 @@ const streakeep = async () => {
 
 app.get("/setup", (req, res) => {
   (async () => {
-    await streakeep();
+    await streakeep({ dryRun: true });
     const cron = encodeURIComponent(`${process.env.MINUTE_TO_RUN} ${process.env.HOUR_TO_RUN} * * ?`);
     const callback = encodeURIComponent(`http://${req.get("host")}/streakeep`);
     const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${callback}`;
