@@ -10,13 +10,11 @@ layout: default
 * After you click "Deploy app", Heroku will provision your instance of Streakeeper. Once it's done, you'll see a "View" button that will take you to the setup page for your new Streakeeper instance.
 * *You must click the "View" button or Streakeeper will not function properly*
 
-# Security
-
-Duolingo doesn't, as of the time of writing, have a public API. Streakeeper must store your password to have access to your account. This means you are trusting Heroku with your password. Don't re-use your password, *especially* for anything important or sensitive.
-
-The PASSWORD field in the "Create New App" page is not obfuscated due to a technical limitation of Heroku's platform API.
-
 # Frequently Asked Questions
+
+## How does Streakeeper work?
+
+Streakeeper runs every day at a time you specify during setup. By default, it runs at 10:45 EST (11:45 EDT). When it runs, it logs into Duolingo using the username and password you provide. It checks to see if you've met your daily goal. If you haven't, it tries to buy a Streak Freeze (an in-game item that extends your streak for one day of inactivity).
 
 ## Why is Heroku asking for a credit card?
 
@@ -39,3 +37,9 @@ Streakeeper has to be updated with the new Duolingo password. This can be done b
 Check our [issues](https://github.com/streakeeper/streakeeper/issues).
 
 Still no luck? [Open a new issue](https://github.com/streakeeper/streakeeper/issues/new)
+
+# Security
+
+Duolingo doesn't have a public API, as of the time of writing. Streakeeper must store your password to have access to your account. This means you are trusting Heroku with your password. Don't re-use your password, *especially* for anything important or sensitive.
+
+The PASSWORD field in the "Create New App" page is not obfuscated due to a technical limitation of Heroku's platform API.
