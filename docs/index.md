@@ -6,7 +6,7 @@ layout: default
 
 * The "Deploy to Heroku" button to the left starts the installation process. Heroku is a service that will host your own, personal copy of Streakeeper. Please read the instructions fully before proceeding.
 * You may have to log in or create a Heroku account. See the [FAQ](#frequently-asked-questions) for more info.
-* After you've set up or logged in to Heroku, you'll see the "Create New App" page. The USERNAME and PASSWORD fields must be updated with your Duolingo credentials for Streakeeper to work. Your credentials are never stored anywhere except *your* copy of Streakeeper. All the same, we strongly recommend against re-using passwords. See [Security](#security) for more info.
+* After you've set up or logged in to Heroku, you'll see the "Create New App" page. "App name" can be left blank. The USERNAME and PASSWORD fields must be updated with your Duolingo credentials for Streakeeper to work. Your credentials are never stored anywhere except *your* copy of Streakeeper. All the same, we strongly recommend against re-using passwords. See [Security](#security) for more info.
 * After you click "Deploy app", Heroku will provision your instance of Streakeeper. Once it's done, you'll see a "View" button that will take you to the setup page for your new Streakeeper instance.
 * *You must click the "View" button or Streakeeper will not function properly*
 
