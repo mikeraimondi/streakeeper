@@ -17,7 +17,7 @@ const screenshot = async (page) => {
   console.log(`uploaded screenshot: ${key}`);
 };
 
-const streakeep = async (options = {}) => {
+const streakeep = async (host, options = {}) => {
   console.log("launching Chrome");
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
   const page = await browser.newPage();
@@ -85,6 +85,12 @@ const streakeep = async (options = {}) => {
     } else {
       console.log("Goal met. Freeze not required.");
     }
+    let nextRunTime = new Date();
+    nextRunTime.setDate(nextRunTime.getDate() + 1);
+    nextRunTime.setHours(23, 45)
+    const callback = encodeURIComponent(`http://${host}/streakeep`);
+    const url = `${process.env.TEMPORIZE_URL}/v1/events/${nextRunTime.toISOString()}/${callback}`;
+    await request.post(url);
   } catch (e) {
     console.error(e);
     if (process.env.DEBUG) {
@@ -111,11 +117,7 @@ const streakeep = async (options = {}) => {
 
 app.get("/setup", (req, res) => {
   (async () => {
-    await streakeep({ dryRun: true });
-    const cron = encodeURIComponent(`${process.env.MINUTE_TO_RUN} ${process.env.HOUR_TO_RUN} * * ?`);
-    const callback = encodeURIComponent(`http://${req.get("host")}/streakeep`);
-    const url = `${process.env.TEMPORIZE_URL}/v1/events/${cron}/${callback}`;
-    await request.post(url);
+    await streakeep(req.get("host"), { dryRun: true });
   })().then(() => {
     res.redirect(`${process.env.DOCS_URL}/success`);
   }).catch((err) => {
@@ -125,7 +127,7 @@ app.get("/setup", (req, res) => {
 });
 
 app.post("/streakeep", (req, res) => {
-  streakeep().then(() => {
+  streakeep(req.get("host")).then(() => {
     res.status(200).end();
   }).catch((err) => {
     console.error(err);
