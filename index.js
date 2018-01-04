@@ -87,9 +87,10 @@ const streakeep = async (host, options = {}) => {
     }
     let nextRunTime = new Date();
     nextRunTime.setDate(nextRunTime.getDate() + 1);
-    nextRunTime.setHours(23, 45)
+    nextRunTime.setHours(23, 45);
+    const runAt = nextRunTime.toISOString().replace(/-|:/g, "").split(".")[0] + "Z";
     const callback = encodeURIComponent(`http://${host}/streakeep`);
-    const url = `${process.env.TEMPORIZE_URL}/v1/events/${nextRunTime.toISOString()}/${callback}`;
+    const url = `${process.env.TEMPORIZE_URL}/v1/events/${runAt}/${callback}`;
     await request.post(url);
   } catch (e) {
     console.error(e);
