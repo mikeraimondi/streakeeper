@@ -19,7 +19,7 @@ const screenshot = async (page) => {
 
 const streakeep = async (host, options = {}) => {
   console.log("launching Chrome");
-  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+  const browser = await puppeteer.launch({ args: ["--no-sandbox", "--disable-setuid-sandbox"] });
   const page = await browser.newPage();
   page.setViewport({ width: 1280, height: 721 });
 

@@ -7,10 +7,10 @@
   ],
   "buildpacks": [
     {
-      "url": "https://github.com/mikeraimondi/heroku-buildpack-google-chrome"
+      "url": "heroku/nodejs"
     },
     {
-      "url": "heroku/nodejs"
+      "url": "https://github.com/jontewks/puppeteer-heroku-buildpack"
     }
   ],
   "env": {
