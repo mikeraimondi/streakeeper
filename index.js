@@ -85,13 +85,6 @@ const streakeep = async (host, options = {}) => {
     } else {
       console.log("Goal met. Freeze not required.");
     }
-    let nextRunTime = new Date();
-    nextRunTime.setDate(nextRunTime.getDate() + 1);
-    nextRunTime.setHours(23, 45);
-    const runAt = nextRunTime.toISOString().replace(/-|:/g, "").split(".")[0] + "Z";
-    const callback = encodeURIComponent(`http://${host}/streakeep`);
-    const url = `${process.env.TEMPORIZE_URL}/v1/events/${runAt}/${callback}`;
-    await request.post(url);
   } catch (e) {
     console.error(e);
     if (process.env.DEBUG) {
@@ -112,6 +105,14 @@ const streakeep = async (host, options = {}) => {
     }
     throw e;
   } finally {
+    console.log("scheduling next run");
+    let nextRunTime = new Date();
+    nextRunTime.setDate(nextRunTime.getDate() + 1);
+    nextRunTime.setHours(23, 45);
+    const runAt = nextRunTime.toISOString().replace(/-|:/g, "").split(".")[0] + "Z";
+    const callback = encodeURIComponent(`http://${host}/streakeep`);
+    const url = `${process.env.TEMPORIZE_URL}/v1/events/${runAt}/${callback}`;
+    await request.post(url);
     await browser.close();
   }
 };
