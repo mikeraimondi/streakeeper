@@ -14,7 +14,7 @@ layout: default
 
 ## How does Streakeeper work?
 
-Streakeeper runs every day at a time you specify during setup. By default, it runs at 10:45 EST (11:45 EDT). When it runs, it logs into Duolingo using the username and password you provide. It checks to see if you've met your daily goal. If you haven't, it tries to buy a Streak Freeze (an in-game item that extends your streak for one day of inactivity).
+Streakeeper runs every day at fifteen minutes before midnight, in a time zone you specify. When it runs, it logs into Duolingo using the username and password you provide. It checks to see if you've met your daily goal. If you haven't, it tries to buy a Streak Freeze (an in-game item that extends your streak for one day of inactivity). It will only be able to buy a Freeze if your account has enough Lingots to afford the purchase. The item is consumed if you haven't met your daily goal by midnight, and your streak will remain intact.
 
 ## Why is Heroku asking for a credit card?
 
